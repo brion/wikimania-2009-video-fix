@@ -24,6 +24,7 @@ function doLogin() {
 	$token = '';
 	while (true) {
 		$request = new HTTP_Request2(API_BASE, HTTP_Request2::METHOD_POST);
+		$request->setConfig( 'ssl_verify_host', false ); // hack for funky cert
 		global $cookieJar;
 		$request->setCookieJar( $cookieJar );
 		$request->addPostParameter(array(
@@ -59,6 +60,7 @@ function doLogin() {
 
 function getUploadToken($filename) {
 	$request = new HTTP_Request2(API_BASE, HTTP_Request2::METHOD_POST);
+	$request->setConfig( 'ssl_verify_host', false ); // hack for funky cert
 	global $cookieJar;
 	$request->setCookieJar( $cookieJar );
 	$request->addPostParameter(array(
@@ -89,6 +91,7 @@ function performUpload($filename) {
 	$token = getUploadToken($filename);
 	
 	$request = new HTTP_Request2(API_BASE, HTTP_Request2::METHOD_POST);
+	$request->setConfig( 'ssl_verify_host', false ); // hack for funky cert
 	global $cookieJar;
 	$request->setCookieJar( $cookieJar );
 	$request->addPostParameter(array(
