@@ -88,6 +88,12 @@ function getUploadToken($filename) {
 
 function performUpload($filename) {
 	$sourceFilename = "step2/$filename";
+	$statusFile = "upload/$filename-upload.json";
+	if (file_exists( $statusFile ) ) {
+		echo "SKIPPING $sattusFile\n";
+		return;
+	}
+	
 	$token = getUploadToken($filename);
 	
 	$request = new HTTP_Request2(API_BASE, HTTP_Request2::METHOD_POST);
@@ -104,12 +110,20 @@ function performUpload($filename) {
 	));
 	$request->addUpload('file', $sourceFilename, $filename, 'video/ogg');
 	
-	$response = $request->send();
+	try {
+		$response = $request->send();
+	} catch (Exception $e) {
+		$fail = array( 'exception' => $response->getMessage() );
+		var_dump( $fail );
+		file_put_contents( $statusFile, json_encode( $fail ) );
+		return;
+	}
+	
 	$status = $response->getStatus();
 	echo "{$status} for $filename\n";
 	
 	$body = $response->getBody();
-	file_put_contents("upload/$filename-upload.json", $body );
+	file_put_contents($statusFile, $body );
 	
 	$data = json_decode($body);
 	echo "upload: {$data->upload->result}\n";
