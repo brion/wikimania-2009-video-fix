@@ -90,7 +90,7 @@ function performUpload($filename) {
 	$sourceFilename = "step2/$filename";
 	$statusFile = "upload/$filename-upload.json";
 	if (file_exists( $statusFile ) ) {
-		echo "SKIPPING $sattusFile\n";
+		echo "SKIPPING $statusFile\n";
 		return;
 	}
 	
@@ -113,7 +113,7 @@ function performUpload($filename) {
 	try {
 		$response = $request->send();
 	} catch (Exception $e) {
-		$fail = array( 'exception' => $response->getMessage() );
+		$fail = array( 'exception' => $e->getMessage() );
 		var_dump( $fail );
 		file_put_contents( $statusFile, json_encode( $fail ) );
 		return;
